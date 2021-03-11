@@ -8,7 +8,7 @@ ifndef::backend-manpage[]
 image::img/bu_50.png[bash_unit]
 endif::[]
 
-bash_unit - bash unit testing enterprise edition framework for professionals !
+bash_unit - bash unit testing enterprise edition framework for professionals!
 
 == Synopsis
 
@@ -34,7 +34,7 @@ _(by the way, the documentation you are reading is itself tested with bash-unit)
 *-p* _pattern_::
   filters tests to run based on the given pattern.
   You can specify several patterns by repeating this option
-  fo each pattern.
+  for each pattern.
 
 *-f* _output_format_::
   specify an alternative output format.
@@ -44,15 +44,17 @@ ifndef::backend-manpage[]
 
 == How to install *bash_unit*
 
-=== installing on Debian/Ubuntu
-
-*bash_unit* deb package is available in the https://github.com/pgrange/bash-unit_deb/releases[bash-unit_deb repo].
-
 === installing on Archlinux
 
 *bash_unit* package is available on Archlinux through AUR. In order to install, issue the following command :
 
     yaourt -Sys bash_unit
+
+=== installing via link:https://nixos.org/[Nix/NixOS]
+
+*bash_unit* package has been added to link:https://github.com/nixos/nixpkgs[nixpkgs]. You can use it with the following command:
+
+    nix-shell -p bash_unit
 
 === other installation
 
@@ -66,19 +68,19 @@ endif::[]
 
 == How to run tests
 
-To run tests, simply call *bash_unit* with all your tests files as parameter. For instance to run *bash_unit* tests, from *bash_unit* directory:
+To run tests, simply call *bash_unit* with all your tests files as parameter. For instance to run some *bash_unit* tests, from *bash_unit* directory:
 
 ```test
-./bash_unit tests/test_bash_unit.sh
+./bash_unit tests/test_core.sh
 ```
 
 ```output
-Running tests in tests/test_bash_unit.sh
+Running tests in tests/test_core.sh
 Running test_assert_equals_fails_when_not_equal... SUCCESS
 Running test_assert_equals_succeed_when_equal... SUCCESS
-Running test_assert_fail_fails... SUCCESS
-Running test_assert_fail_succeeds... SUCCESS
 Running test_assert_fails... SUCCESS
+Running test_assert_fails_fails... SUCCESS
+Running test_assert_fails_succeeds... SUCCESS
 Running test_assert_not_equals_fails_when_equal... SUCCESS
 Running test_assert_not_equals_succeeds_when_not_equal... SUCCESS
 Running test_assert_shows_stderr_on_failure... SUCCESS
@@ -86,25 +88,14 @@ Running test_assert_shows_stdout_on_failure... SUCCESS
 Running test_assert_status_code_fails... SUCCESS
 Running test_assert_status_code_succeeds... SUCCESS
 Running test_assert_succeeds... SUCCESS
-Running test_bash_unit_changes_cwd_to_current_test_file_directory... SUCCESS
-Running test_bash_unit_runs_teardown_even_in_case_of_failure... SUCCESS
-Running test_bash_unit_succeed_when_no_failure_even_if_no_teardown... SUCCESS
-Running test_display_usage_when_test_file_does_not_exist... SUCCESS
-Running test_exit_code_not_0_in_case_of_failure... SUCCESS
 Running test_fail_fails... SUCCESS
 Running test_fail_prints_failure_message... SUCCESS
 Running test_fail_prints_where_is_error... SUCCESS
-Running test_fails_when_test_file_does_not_exist... SUCCESS
 Running test_fake_actually_fakes_the_command... SUCCESS
 Running test_fake_can_fake_inline... SUCCESS
 Running test_fake_echo_stdin_when_no_params... SUCCESS
 Running test_fake_exports_faked_in_subshells... SUCCESS
 Running test_fake_transmits_params_to_fake_code... SUCCESS
-Running test_one_test_should_stop_after_first_assertion_failure... SUCCESS
-Running test_one_test_should_stop_when_assert_fails... SUCCESS
-Running test_run_all_file_parameters... SUCCESS
-Running test_run_all_tests_even_in_case_of_failure... SUCCESS
-Running test_run_only_tests_that_match_pattern... SUCCESS
 ```
 
 You might also want to run only specific tests, you may do so with the
@@ -112,16 +103,16 @@ _-p_ option. This option accepts a pattern as parameter and filters test
 functions against this pattern.
 
 ```test
-./bash_unit -p fail_fails -p assert tests/test_bash_unit.sh
+./bash_unit -p fail_fails -p assert tests/test_core.sh
 ```
 
 ```output
-Running tests in tests/test_bash_unit.sh
+Running tests in tests/test_core.sh
 Running test_assert_equals_fails_when_not_equal... SUCCESS
 Running test_assert_equals_succeed_when_equal... SUCCESS
-Running test_assert_fail_fails... SUCCESS
-Running test_assert_fail_succeeds... SUCCESS
 Running test_assert_fails... SUCCESS
+Running test_assert_fails_fails... SUCCESS
+Running test_assert_fails_succeeds... SUCCESS
 Running test_assert_not_equals_fails_when_equal... SUCCESS
 Running test_assert_not_equals_succeeds_when_not_equal... SUCCESS
 Running test_assert_shows_stderr_on_failure... SUCCESS
@@ -130,24 +121,22 @@ Running test_assert_status_code_fails... SUCCESS
 Running test_assert_status_code_succeeds... SUCCESS
 Running test_assert_succeeds... SUCCESS
 Running test_fail_fails... SUCCESS
-Running test_one_test_should_stop_after_first_assertion_failure... SUCCESS
-Running test_one_test_should_stop_when_assert_fails... SUCCESS
 ```
 
 *bash_unit* supports the http://testanything.org/[Test Anything Protocol] so you can ask for a tap formatted
 output with the _-f_ option.
 
 ```test
-./bash_unit -f tap tests/test_bash_unit.sh
+./bash_unit -f tap tests/test_core.sh
 ```
 
 ```output
-# Running tests in tests/test_bash_unit.sh
+# Running tests in tests/test_core.sh
 ok - test_assert_equals_fails_when_not_equal
 ok - test_assert_equals_succeed_when_equal
-ok - test_assert_fail_fails
-ok - test_assert_fail_succeeds
 ok - test_assert_fails
+ok - test_assert_fails_fails
+ok - test_assert_fails_succeeds
 ok - test_assert_not_equals_fails_when_equal
 ok - test_assert_not_equals_succeeds_when_not_equal
 ok - test_assert_shows_stderr_on_failure
@@ -155,25 +144,14 @@ ok - test_assert_shows_stdout_on_failure
 ok - test_assert_status_code_fails
 ok - test_assert_status_code_succeeds
 ok - test_assert_succeeds
-ok - test_bash_unit_changes_cwd_to_current_test_file_directory
-ok - test_bash_unit_runs_teardown_even_in_case_of_failure
-ok - test_bash_unit_succeed_when_no_failure_even_if_no_teardown
-ok - test_display_usage_when_test_file_does_not_exist
-ok - test_exit_code_not_0_in_case_of_failure
 ok - test_fail_fails
 ok - test_fail_prints_failure_message
 ok - test_fail_prints_where_is_error
-ok - test_fails_when_test_file_does_not_exist
 ok - test_fake_actually_fakes_the_command
 ok - test_fake_can_fake_inline
 ok - test_fake_echo_stdin_when_no_params
 ok - test_fake_exports_faked_in_subshells
 ok - test_fake_transmits_params_to_fake_code
-ok - test_one_test_should_stop_after_first_assertion_failure
-ok - test_one_test_should_stop_when_assert_fails
-ok - test_run_all_file_parameters
-ok - test_run_all_tests_even_in_case_of_failure
-ok - test_run_only_tests_that_match_pattern
 ```
 
 == How to write tests
@@ -182,11 +160,20 @@ Write your test functions in a file. The name of a test function has to start wi
 
 Use the *bash_unit* assertion functions in your test functions, see below.
 
-You may write a *setup* function that will be exectuted before each test is run.
+You may write a *setup* function that will be executed before each test is run.
 
-You may write a *teardown* function that will be exectuted after each test is run.
+You may write a *teardown* function that will be executed after each test is run.
 
-If you need to set someting up only once for all tests, simply write your code outside any test function, this is a bash script.
+You may write a *setup_suite* function that will be executed only once before all the tests of your test file.
+
+You may write a *teardown_suite* function that will be executed only once after all the tests of your test file.
+
+If you write code outside of any bash function, this code will be executed once at test file loading time since
+your file is a bash script and *bash_unit* sources it before running your tests. It is suggested to write a
+*setup_suite* function and avoid any code outside a bash function.
+
+If you want to keep an eye on a test not yet implemented, prefix the name of the function by *todo* instead of test.
+Test to do are not executed and do not impact the global status of your test suite but are displayed in *bash_unit* output.
 
 *bash_unit* changes the current working directory to the one of the running test file. If you need to access files from your test code, for instance the script under test, use path relative to the test file.
 
@@ -202,7 +189,7 @@ You may need to change the behavior of some commands to create conditions for yo
 
 Fails the test and displays an optional message.
 
-```bash
+```test
 test_can_fail() {
   fail "this test failed on purpose"
 }
@@ -224,7 +211,7 @@ _assertion_ fails if its evaluation returns a status code different from 0.
 
 In case of failure, the standard output and error of the evaluated _assertion_ is displayed. The optional message is also displayed.
 
-```bash
+```test
 test_assert_fails() {
   assert false "this test failed, obvioulsy"
 }
@@ -242,7 +229,7 @@ Running test_assert_succeed... SUCCESS
 
 But you probably want to assert less obvious facts.
 
-```bash
+```test
 code() {
   touch /tmp/the_file
 }
@@ -269,7 +256,7 @@ doc:14:test_code_makes_the_file_executable()
 
 It may also be fun to use assert to check for the expected content of a file.
 
-```bash
+```test
 code() {
   echo 'not so cool' > /tmp/the_file
 }
@@ -300,7 +287,7 @@ _assertion_ fails if its evaluation returns a status code different from 0.
 
 If the evaluated expression does not fail, then *assert_fail* will fail and display the standard output and error of the evaluated _assertion_. The optional message is also displayed.
 
-```bash
+```test
 code() {
   echo 'not so cool' > /tmp/the_file
 }
@@ -308,13 +295,13 @@ code() {
 test_code_does_not_write_cool_in_the_file() {
   code
 
-  assert_fail "grep cool /tmp/the_file" "should not write 'cool' in /tmp/the_file"
+  assert_fails "grep cool /tmp/the_file" "should not write 'cool' in /tmp/the_file"
 }
 
 test_code_does_not_write_this_in_the_file() {
   code
 
-  assert_fail "grep this /tmp/the_file" "should not write 'this' in /tmp/the_file"
+  assert_fails "grep this /tmp/the_file" "should not write 'this' in /tmp/the_file"
 }
 ```
 
@@ -336,7 +323,7 @@ It may be useful if you want to distinguish between several error conditions in 
 
 In case of failure, the standard output and error of the evaluated _assertion_ is displayed. The optional message is also displayed.
 
-```bash
+```test
 code() {
   exit 23
 }
@@ -358,7 +345,7 @@ doc:6:test_code_should_fail_with_code_25()
 
 Asserts for equality of the two strings _expected_ and _actual_.
 
-```bash
+```test
 test_obvious_inequality_with_assert_equals(){
   assert_equals "a string" "another string" "a string should be another string"
 }
@@ -382,7 +369,7 @@ doc:2:test_obvious_inequality_with_assert_equals()
 
 Asserts for inequality of the two strings _unexpected_ and _actual_.
 
-```bash
+```test
 test_obvious_equality_with_assert_not_equals(){
   assert_not_equals "a string" "a string" "a string should be different from another string"
 }
@@ -408,7 +395,7 @@ Fakes _command_ and replaces it with _replacement code_ (if code is specified) f
 
 For instance:
 
-```bash
+```test
 fake ps echo hello world
 ps
 ```
@@ -421,7 +408,7 @@ hello world
 
 We can do the same using _stdin_ of fake:
 
-```bash
+```test
 fake ps << EOF
 hello world
 EOF
@@ -442,7 +429,7 @@ endif::[]
 
 Here is an exemple, parameterizing fake with its _stdin_ to test that code fails when some process does not run and succeeds otherwise:
 
-```bash
+```test
 code() {
   ps a | grep apache
 }
@@ -465,7 +452,7 @@ test_code_fails_if_apache_does_not_run() {
 24162 pts/7    00:00:00 ps
 EOF
 
-  assert_fail code "code should fail when apache is not running"
+  assert_fails code "code should fail when apache is not running"
 }
 
 ```
@@ -477,9 +464,9 @@ Running test_code_succeeds_if_apache_runs... SUCCESS
 
 === Using a function
 
-In a previous exemple, we faked _ps_ by specifiyng code inline:
+In a previous exemple, we faked _ps_ by specifying code inline:
 
-```bash
+```test
 fake ps echo hello world
 ps
 ```
@@ -490,7 +477,7 @@ hello world
 
 If you need to write more complex code to fake your command, you may abstract this code in a function:
 
-```bash
+```test
 _ps() {
   echo hello world
 }
@@ -502,9 +489,9 @@ ps
 hello world
 ```
 
-Be carefull however that your __ps_ function is not exported to sub-processes. It means that, depending on how your code under test works, __ps_ may not be defined in the context where _ps_ will be called. For instance:
+Be carefull however that your _ps function is not exported to sub-processes. It means that, depending on how your code under test works, _ps may not be defined in the context where ps will be called. For instance:
 
-```bash
+```test
 _ps() {
   echo hello world
 }
@@ -514,12 +501,12 @@ bash -c ps
 ```
 
 ```output
-bash: line 1: _ps: command not found
+environment: line 1: _ps: command not found
 ```
 
 It depends on your code under test but it is safer to just export functions needed by your fake so that they are available in sub-processes:
 
-```bash
+```test
 _ps() {
   echo hello world
 }
@@ -537,6 +524,13 @@ hello world
 override the actual command. In some context the command can not be
 overriden by a function. For instance if your code under test relies on _exec_ to launch _ps_, *fake* will have no effect.
 
+*fake* may also imply strange behaviors from bash_unit when you try to
+fake really basic stuff. bash_unit tries to be as much immune to this as
+possible but there are some limits. Especially and as surprising as it
+might seem, bash allows creating functions named after builtin commands
+and bash_unit won't resist that kind of situation. So, for instance, do
+not try to fake: `exit`; `local`; `trap`; `eval`; `export`; `if`; `then`; `else`; `fi`; `while`; `do`; `done`; `$`; `echo`; `[` (I know, this is not a builtin but don't).
+
 === *fake* parameters
 
 *fake* stores parameters given to the fake in the global variable _FAKE_PARAMS_ so that you can use them inside your fake.
@@ -549,7 +543,7 @@ For instance, in our previous code that checks apache is running, we have an iss
 
 To do that, the first naive approch would be:
 
-```bash
+```test
 code() {
   ps a | grep apache
 }
@@ -589,7 +583,7 @@ With bash, the result code of a pipeline equals the result code of the last comm
 
 An alternative may be to activate bash _pipefail_ option but this may introduce unwanted side effects. We can also simply not output anything in __ps_ so that _grep_ fails:
 
-```bash
+```test
 code() {
   ps a | grep apache
 }
@@ -619,7 +613,7 @@ The only correct alternative is for the fake _ps_ to write _FAKE_PARAMS_ in a fi
 so that your test can grab them after code execution and assert their value. For instance
 by writing to a file:
 
-```bash
+```test
 code() {
   ps a | grep apache
 }
@@ -655,7 +649,7 @@ doc:14:test_code_gives_ps_appropriate_parameters()
 
 We can also compact the fake definition:
 
-```bash
+```test
 code() {
   ps a | grep apache
 }
@@ -681,7 +675,7 @@ doc:10:test_code_gives_ps_appropriate_parameters()
 
 Finally, we can avoid the _/tmp/fake_params_ temporary file by using _coproc_:
 
-```bash
+```test
 code() {
   ps a | grep apache
 }

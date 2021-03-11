@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 test_fail_fails() {
   with_bash_unit_muted fail && \
@@ -11,28 +11,28 @@ test_fail_fails() {
 
 #fail can now be used in the following tests
 
-test_assert_fail_succeeds() {
-  (assert_fail false) || fail 'assert_fail should succeed' 
+test_assert_fails_succeeds() {
+  (assert_fails false) || fail 'assert_fails should succeed' 
 }
 
-test_assert_fail_fails() {
-  with_bash_unit_muted assert_fail true && fail 'assert_fail should fail' || true
+test_assert_fails_fails() {
+  with_bash_unit_muted assert_fails true && fail 'assert_fails should fail' || true
 }
 
-#assert_fail can now be used in the following tests
+#assert_fails can now be used in the following tests
 
 test_assert_succeeds() {
   assert true || fail 'assert should succeed'
 }
 
 test_assert_fails() {
-  assert_fail "with_bash_unit_muted assert false" "assert should fail"
+  assert_fails "with_bash_unit_muted assert false" "assert should fail"
 }
 
 #assert can now be used in the following tests
 
 test_assert_equals_fails_when_not_equal() {
-  assert_fail \
+  assert_fails \
     "with_bash_unit_muted assert_equals toto tutu" \
     "assert_equals should fail"
 }
@@ -46,7 +46,7 @@ test_assert_equals_succeed_when_equal() {
 #assert_equals can now be used in the following tests
 
 test_assert_not_equals_fails_when_equal() {
-  assert_fail \
+  assert_fails \
     "with_bash_unit_muted assert_not_equals toto toto" \
     "assert_not_equals should fail"
 }
@@ -75,7 +75,7 @@ test_assert_status_code_succeeds() {
 }
 
 test_assert_status_code_fails() {
-  assert_fail "with_bash_unit_muted assert_status_code 3 true" \
+  assert_fails "with_bash_unit_muted assert_status_code 3 true" \
     "assert_status_code should fail"
 }
 
@@ -135,12 +135,34 @@ test_fake_echo_stdin_when_no_params() {
  7818 pts/9    00:00:00 ps
 EOF
 
-  assert_equals 2 $(ps | grep pts | wc -l)
+  assert_equals 2 $(ps | "$GREP" pts | wc -l)
 }
 
-test_bash_unit_changes_cwd_to_current_test_file_directory() {
+if [[ "${STICK_TO_CWD}" != true ]]
+then
+  # do not test for cwd if STICK_TO_CWD is true
+  test_bash_unit_changes_cwd_to_current_test_file_directory() {
+    assert "ls ../tests/$(basename "$BASH_SOURCE")" \
+      "bash_unit should change current working directory to match the directory of the currenlty running test"
+  }
+
+  #the following assertion is out of any test on purpose
   assert "ls ../tests/$(basename "$BASH_SOURCE")" \
-    "bash_unit should change current working directory to match the directory of the currenlty running test"
+  "bash_unit should change current working directory to match the directory of the currenlty running test before sourcing test file"
+fi
+
+setup() {
+  # enforce bash variable controls during core tests
+  # this way we know that people using this enforcement
+  # in their own code can still rely on bash_unit
+  set -u
+  # fake basic unix commands bash_unit relies on so that
+  # we ensure bash_unit keeps working when people fake
+  # this commands in their tests
+  fake cat :
+  fake sed :
+  fake grep :
+  fake printf :
 }
 
 line() {
@@ -206,16 +228,19 @@ unmute_logs() {
   notify_test_failed   () { echo "FAILURE" ; echo $2 ; }
 }
 
+CAT="$(which cat)"
+GREP="$(which grep)"
+
 unmute_stack() {
-  notify_stack() { cat ; }
+  notify_stack() { "$CAT" ; }
 }
 
 unmute_out() {
-  notify_stdout() { cat ; }
+  notify_stdout() { "$CAT" ; }
 }
 
 unmute_err() {
-  notify_stderr() { cat ; }
+  notify_stderr() { "$CAT" ; }
 }
 
 mute() {
